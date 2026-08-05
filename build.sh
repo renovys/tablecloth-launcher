@@ -49,6 +49,10 @@ ICONSET_DIR="$TEMP_ROOT/AppIcon.iconset"
 /bin/chmod 755 "$MACOS_DIR/launcher" || fail '런처 실행 권한을 설정하지 못했습니다.'
 /usr/bin/plutil -lint "$CONTENTS_DIR/Info.plist" >/dev/null || fail 'Info.plist 문법 검증에 실패했습니다.'
 
+# AGPL-3.0 배포 조건에 맞춰 라이선스와 고지를 번들에 동봉한다.
+/bin/cp "$SCRIPT_DIR/LICENSE" "$RESOURCES_DIR/LICENSE" || fail 'LICENSE를 번들에 복사하지 못했습니다.'
+/bin/cp "$SCRIPT_DIR/NOTICE" "$RESOURCES_DIR/NOTICE" || fail 'NOTICE를 번들에 복사하지 못했습니다.'
+
 make_icon() {
 	icon_size="$1"
 	icon_dpi="$2"
@@ -79,10 +83,19 @@ for icon_name in icon_16x16.png icon_16x16@2x.png icon_32x32.png icon_32x32@2x.p
     [ -s "$VERIFY_ICONSET_DIR/$icon_name" ] || fail "생성한 icns에서 $icon_name 을 확인하지 못했습니다."
 done
 
+# 기존 앱은 지우지 말고 옆으로 치워둔다. 설치가 실패하면 되돌릴 수 있어야 한다.
+BACKUP_APP=''
 if [ -e "$APP_PATH" ] || [ -L "$APP_PATH" ]; then
-	/bin/rm -rf "$APP_PATH" || fail '기존 앱을 덮어쓰지 못했습니다.'
+	BACKUP_APP="$APP_PATH.old-$$"
+	/bin/mv "$APP_PATH" "$BACKUP_APP" || fail '기존 앱을 옮기지 못했습니다.'
 fi
-/bin/mv "$STAGING_APP" "$APP_PATH" || fail '앱을 응용 프로그램 폴더에 설치하지 못했습니다.'
+if ! /bin/mv "$STAGING_APP" "$APP_PATH"; then
+	if [ -n "$BACKUP_APP" ]; then
+		/bin/mv "$BACKUP_APP" "$APP_PATH" >/dev/null 2>&1 && echo '설치에 실패해 기존 앱을 되돌렸습니다.' >&2
+	fi
+	fail '앱을 응용 프로그램 폴더에 설치하지 못했습니다.'
+fi
+[ -n "$BACKUP_APP" ] && /bin/rm -rf "$BACKUP_APP"
 
 "$LSREGISTER_PATH" -u "$APP_PATH" >/dev/null 2>&1 || true
 "$LSREGISTER_PATH" -f "$APP_PATH" >/dev/null 2>&1 || fail '앱 등록에 실패했습니다.'

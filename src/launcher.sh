@@ -1,4 +1,10 @@
 #!/bin/bash
+# 식탁보 런처 — macOS에서 macSandbox로 식탁보를 실행하는 비공식 보조 도구
+# Copyright (C) 2026 renovys
+# 이 프로그램은 GNU Affero General Public License v3.0 조건으로 배포된다.
+# 식탁보(TableCloth)와 macSandbox는 yourtablecloth 프로젝트의 저작물이며
+# 이 런처는 원 프로젝트와 무관한 개인 제작물이다. 자세한 고지는 NOTICE 참고.
+#
 # 식탁보를 실행하고, 다음 실행을 위한 업데이트 확인을 예약한다.
 # macSandbox는 샌드박스 세션이 이미 떠 있으면 .wsb 전달을 무시할 수 있다.
 # 따라서 현재 세션을 정리한 뒤 open -a로 설정 파일을 전달한다.
@@ -253,6 +259,20 @@ send_notification() {
 		-e 'on run argv' \
 		-e 'display notification (item 2 of argv) with title (item 1 of argv)' \
 		-e 'end run' "$notification_title" "$notification_body" >/dev/null 2>&1
+}
+
+# macSandbox 번들 경로에서 실행된 VM 프로세스만 골라 종료한다.
+# `ps -Ao comm=`은 실행 파일의 전체 경로를 주므로 번들 경로로 소유를 판별할 수 있다.
+# 대상을 하나도 특정하지 못하면 아무것도 죽이지 않는다(남의 VM 보호가 우선).
+terminate_sandbox_vms() {
+	/bin/ps -Ao pid=,comm= 2>/dev/null | while read -r vm_pid vm_command; do
+		case "$vm_command" in
+			"$SANDBOX_APP"/*qemu-system-*)
+				/bin/kill "$vm_pid" >/dev/null 2>&1
+				;;
+		esac
+	done
+	return 0
 }
 
 show_error() {
@@ -642,9 +662,10 @@ if /usr/bin/pgrep -x MacSandbox >/dev/null 2>&1; then
 		sleep 0.5
 		i=$((i + 1))
 	done
-	# 앱이 남아 있으면 알려진 VM 프로세스만 정리한다.
+	# 앱이 남아 있으면 macSandbox 번들 안에서 실행된 VM 프로세스만 정리한다.
+	# 이름만 보고 죽이면 UTM 등 사용자가 따로 띄운 QEMU까지 함께 종료된다.
 	if /usr/bin/pgrep -x MacSandbox >/dev/null 2>&1; then
-		/usr/bin/pkill -x qemu-system-aarch64 >/dev/null 2>&1
+		terminate_sandbox_vms
 		sleep 2
 	fi
 fi
