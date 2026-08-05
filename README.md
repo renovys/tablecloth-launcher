@@ -31,8 +31,8 @@ Apple Silicon macOS에서 다음 순서로 실행하십시오.
 
 런처와 상태 파일을 제거하려면 저장소의 uninstall.sh를 실행하고 확인하십시오. Dock에 남는 항목은 Dock에서 보조 클릭한 뒤 'Dock에서 제거'를 선택하십시오. macSandbox 자체와 공식 식탁보 파일은 이 스크립트가 제거하지 않습니다.
 
-## 원저작자 리스펙
+## 원저작자
 
-식탁보(TableCloth)와 macSandbox는 yourtablecloth 프로젝트의 저작물이며, 대표 개발자는 Jung Hyun Nam(남정현)입니다. 원 프로젝트는 TableCloth(https://github.com/yourtablecloth/TableCloth)와 macSandbox(https://github.com/yourtablecloth/macSandbox)에서 확인할 수 있습니다. 두 프로젝트와 관련 저작물의 라이선스는 AGPL-3.0입니다.
+식탁보(TableCloth)와 macSandbox는 yourtablecloth 프로젝트의 저작물이며, 대표 개발자는 Jung Hyun Nam(남정현)님 입니다. 원 프로젝트는 TableCloth(https://github.com/yourtablecloth/TableCloth) 와 macSandbox(https://github.com/yourtablecloth/macSandbox) 에서 확인할 수 있습니다. 두 프로젝트와 관련 저작물의 라이선스는 AGPL-3.0입니다.
 
 이 저장소는 renovys/tablecloth-launcher(https://github.com/renovys/tablecloth-launcher)에서 배포하는 개인 제작 비공식 보조 도구이며, yourtablecloth 프로젝트가 만들거나 보증하거나 운영하는 저장소가 아닙니다. 원 프로젝트의 이름과 저작권을 존중하고, 원 프로젝트의 라이선스와 고지 사항을 함께 확인하십시오.
