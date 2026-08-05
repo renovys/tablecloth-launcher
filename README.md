@@ -1,6 +1,6 @@
 # 식탁보 런처
 
-macOS에서 'macSandbox for Windows'를 식탁보용 .wsb 설정으로 실행하는 비공식 런처입니다. macSandbox는 샌드박스 세션이 이미 실행 중이면 새 .wsb 전달을 조용히 무시할 수 있습니다. 이 런처는 실행 전에 기존 MacSandbox 세션과 알려진 qemu-system-aarch64 VM 프로세스를 정리한 뒤 open -a로 설정 파일을 전달합니다.
+macOS에서 'macSandbox for Windows'를 식탁보용 .wsb 설정으로 실행하는 비공식 런처입니다. macSandbox는 샌드박스 세션이 이미 실행 중이면 새 .wsb 전달을 조용히 무시할 수 있습니다. 이 런처는 실행 전에 기존 MacSandbox 세션을 정리한 뒤 open -a로 설정 파일을 전달합니다. VM 프로세스를 정리할 때는 이름이 아니라 macSandbox 번들 경로로 소유를 판별하므로, 사용자가 따로 실행한 다른 QEMU VM은 건드리지 않습니다.
 
 ## 설치
 
